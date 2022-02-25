@@ -1,0 +1,6 @@
+git init
+git status
+git add .
+git commit -m "v1"
+
+git remote add cppOrigin https://github.com/ranjit95s/CPP_DSA.git

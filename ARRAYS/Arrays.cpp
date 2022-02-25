@@ -415,7 +415,7 @@ void merge_Intervals_Main_Func(vector<vector<int>> interval)
 }
 
 void next_Permutation_Main_Func(vector<int> &arr, int n)
-{   // 15
+{ // 15
     /*
 !Algorithm :
 
@@ -481,7 +481,7 @@ int merge_INV(int *arr, int *temp, int left, int mid, int right)
         else
         {
             temp[_tempArrayIndex++] = arr[_right++];
-        /*
+            /*
     In merge process, let _left is used for indexing left sub-array and 
     j for right sub-array. At any step in merge(), 
     if a[_left] is greater than a[_right], then there are (mid – _left) inversions. 
@@ -520,28 +520,157 @@ int count_Inversion_Main_Func2(int *arr, int *temp, int left, int right)
     return inv_cnt;
 }
 
-void best_Time_to_Buy_N_Sell_Stock_Main_Func1(int *prices, int n){ // 17.1
+void best_Time_to_Buy_N_Sell_Stock_Main_Func1(int *prices, int n)
+{ // 17.1
     // ! least_Most
     int leastPrice = INT_MAX;
     int maxPrice = 0;
     int leastMaxPrice = 0;
-    for(int i = 0; i < n; i++){
-        if(prices[i] < leastPrice)
+    for (int i = 0; i < n; i++)
+    {
+        if (prices[i] < leastPrice)
             leastPrice = prices[i];
         leastMaxPrice = prices[i] - leastPrice;
-        if(leastMaxPrice > maxPrice)
-        maxPrice = leastMaxPrice;
+        if (leastMaxPrice > maxPrice)
+            maxPrice = leastMaxPrice;
     }
-    cout<<"maximum profit : "<<maxPrice<<"\n";
+    cout << "maximum profit : " << maxPrice << "\n";
 }
-void best_Time_to_Buy_N_Sell_Stock_Main_Func2(int *prices, int n){ // 17.2
-		int maxPrice = 0;
-        int currPrice = prices[0];
-        for(int i = 1; i<n; i++){
-            currPrice = min(prices[i],currPrice);
-            maxPrice = max(maxPrice,(prices[i] - currPrice));
+void best_Time_to_Buy_N_Sell_Stock_Main_Func2(int *prices, int n)
+{ // 17.2
+    int maxPrice = 0;
+    int currPrice = prices[0];
+    for (int i = 1; i < n; i++)
+    {
+        currPrice = min(prices[i], currPrice);
+        maxPrice = max(maxPrice, (prices[i] - currPrice));
+    }
+    cout << "maximum profit : " << maxPrice << "\n";
+}
+
+void common_Elements_Main_Func(vector<int> arr0, vector<int> arr1, vector<int> arr2)
+{ // 19
+    int i = 0, j = 0, k = 0;
+    vector<int> ans;
+    int N = arr0.size();
+    int M = arr1.size();
+    int O = arr2.size();
+
+    while (i < N && j < M && k < O)
+    {
+        if (arr0[i] == arr1[j] && arr1[j] == arr2[k])
+        {
+            ans.push_back(arr0[i]);
+            // ! given sorted arrays if any duplicate value find skip it
+            while (arr0[i] == arr0[i + 1])
+                i++;
+            while (arr1[j] == arr1[j + 1])
+                j++;
+            while (arr2[k] == arr2[k + 1])
+                k++;
+            i++;
+            j++;
+            k++;
         }
-        cout<<"maximum profit : "<<maxPrice<<"\n";
+        else if (arr0[i] <= arr1[j] && arr0[i] <= arr2[k])
+        {
+            i++;
+        }
+        else if (arr1[j] <= arr0[i] && arr1[j] <= arr2[k])
+        {
+            j++;
+        }
+        else
+        {
+            k++;
+        }
+    }
+    print_VArray(ans, ans.size());
+}
+
+void alt_posNeg_Main_Func1(int *arr, int n)
+{ // 20.1
+    // ! with O(N) Time
+    // ! with O(N) Space
+
+    vector<int> pos;
+    vector<int> neg;
+    for (int i = 0; i < n; i++)
+    {
+        if (arr[i] < 0)
+        {
+            neg.push_back(arr[i]);
+        }
+        else
+        {
+            pos.push_back(arr[i]);
+        }
+    }
+    int f = pos.size();
+    int s = neg.size();
+    int i = 0;
+    int point = 0;
+    int point0 = 0;
+    while (point < f && point0 < s)
+    {
+        arr[i] = neg[point0];
+        i++;
+        point0++;
+        arr[i] = pos[point];
+        i++;
+        point++;
+    }
+    while (point0 < s)
+    {
+        arr[i] = neg[point0];
+        i++;
+        point0++;
+    }
+    while (point < f)
+    {
+        arr[i] = pos[point];
+        i++;
+        point++;
+    }
+    print_Array(arr, n);
+}
+void rightrotate(int *arr, int n, int wi, int i)
+{ // 20.2.1
+    char index = arr[i];
+    for (int j = i; j > wi; j--)
+        arr[j] = arr[j - 1];
+    arr[wi] = index;
+}
+void alt_posNeg_Main_Func2(int *arr, int n)
+{ // 20.2
+    int wrongIndex = -1;
+    for (int index = 0; index < n; index++)
+    {
+
+        if (wrongIndex >= 0)
+        {
+            if (((arr[index] >= 0) && (arr[wrongIndex] < 0)) || ((arr[index] < 0) && (arr[wrongIndex] >= 0)))
+            {
+                rightrotate(arr, n, wrongIndex, index);
+                if (index - wrongIndex >= 2)
+                {
+                    wrongIndex = wrongIndex + 2;
+                }
+                else
+                {
+                    wrongIndex = -1;
+                }
+            }
+        }
+        if (wrongIndex == -1)
+        {
+            if (((arr[index] >= 0) && (!(index & 0x01))) || ((arr[index] < 0) && (index & 0x01)))
+            {
+                wrongIndex = index;
+            }
+        }
+    }
+    print_Array(arr, n);
 }
 /* 
 ! |----------------------------- SUB_main_Func end -----------------------------|
@@ -550,7 +679,29 @@ void best_Time_to_Buy_N_Sell_Stock_Main_Func2(int *prices, int n){ // 17.2
 ! |----------------------------- SUB_main start -----------------------------| 
 */
 
-void best_Time_to_Buy_N_Sell_Stock_Main(){ // 17
+void alt_posNeg_Main()
+{ // 20
+    int arr[] = {-5, -2, 5, 2, 4, 7, 1, 8, 0, -8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    // output: arr[] = {-5, 5, -2, 2, -8, 4, 7, 1, 8, 0}
+    cout << "\n";
+    // alt_posNeg_Main_Func1(arr, n);
+    alt_posNeg_Main_Func2(arr, n);
+    cout << "\n";
+}
+
+void common_Elements_Main()
+{ // 19
+    vector<int> arr0{1, 5, 10, 20, 40, 80};
+    vector<int> arr1{6, 7, 20, 80, 100};
+    vector<int> arr2{3, 4, 15, 20, 30, 70, 80, 120};
+    cout << "\n";
+    common_Elements_Main_Func(arr0, arr1, arr2);
+    cout << "\n";
+}
+
+void best_Time_to_Buy_N_Sell_Stock_Main()
+{ // 17
     /* 
 Input: prices = [7,1,5,3,6,4]
 Output: 5
@@ -564,7 +715,7 @@ because you must buy before you sell.
     // cout << "\n";
     // best_Time_to_Buy_N_Sell_Stock_Main_Func1(arr,n);
     cout << "\n";
-    best_Time_to_Buy_N_Sell_Stock_Main_Func2(arr,n);
+    best_Time_to_Buy_N_Sell_Stock_Main_Func2(arr, n);
     cout << "\n";
 }
 
@@ -579,12 +730,12 @@ void count_Inversion_Main()
 
     auto start = high_resolution_clock::now();
     int invCount = count_Inversion_Main_Func2(arr, temp, 0, n - 1);
-    print_Array(arr,n);
+    print_Array(arr, n);
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: "
          << duration.count() << " microseconds" << endl;
-         
+
     cout << "Inversion Count : " << invCount << "\n";
     cout << "\n";
 }
@@ -860,4 +1011,21 @@ int main()
     *17. Best Time to Buy and Sell Stock (2M)
     */
     // best_Time_to_Buy_N_Sell_Stock_Main();
+
+    /*
+    * 18. Count pairs with given sum
+    */
+    // ! Heaps
+    //  TODO : countPairSum_Main();
+
+    /*
+    *19. Common elements
+    */
+    // common_Elements_Main();
+
+    /*
+    *20.Rearrange array in alternating 
+    *positive & negative items with O(1) extra space
+    */
+    alt_posNeg_Main();
 }
