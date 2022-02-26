@@ -198,7 +198,6 @@ void moveNegative_Main_Func1(int *arr, int n)
                 swap(arr[i], arr[place_ve++]);
     }
 }
-
 void moveNegative_Main_Func2(int *arr, int left, int right)
 { // 6.2
     while (left <= right)
@@ -306,7 +305,6 @@ void duplicate_In_Array_Main_Func1(vector<int> arr, int n)
     }
     cout << "Duplicate is : " << mid << endl;
 }
-
 void duplicate_In_Array_Main_Func2(vector<int> arr, int n)
 { // 12.2
     // ? TWO POINTER ALGO
@@ -464,7 +462,6 @@ void count_Inversion_Main_Func1(int *arr, int n)
                 inv_count++;
     cout << "count_Inversion : " << inv_count << "\n";
 }
-
 int merge_INV(int *arr, int *temp, int left, int mid, int right)
 { // 16.2.1
     int _left, _right, _tempArrayIndex;
@@ -502,7 +499,6 @@ int merge_INV(int *arr, int *temp, int left, int mid, int right)
 
     return inv_cnt;
 }
-
 int count_Inversion_Main_Func2(int *arr, int *temp, int left, int right)
 { // 16.2.0
     //! MergeSort Approch
@@ -634,12 +630,14 @@ void alt_posNeg_Main_Func1(int *arr, int n)
     }
     print_Array(arr, n);
 }
-void rightrotate(int *arr, int n, int wi, int i)
+void rightrotate(int *arr, int n, int from, int to)
 { // 20.2.1
-    char index = arr[i];
-    for (int j = i; j > wi; j--)
-        arr[j] = arr[j - 1];
-    arr[wi] = index;
+//? Utility function to right rotate all elements between
+//? [from(wrongIndex), to(index)]
+    int temp = arr[to]; //? store index elem and perform right rotation
+    for (int i = to; i > from; i--)
+        arr[i] = arr[i - 1];
+    arr[from] = temp; //? put stored index elem to wrongIndex
 }
 void alt_posNeg_Main_Func2(int *arr, int n)
 { // 20.2
@@ -649,22 +647,26 @@ void alt_posNeg_Main_Func2(int *arr, int n)
 
         if (wrongIndex >= 0)
         {
-            if (((arr[index] >= 0) && (arr[wrongIndex] < 0)) || ((arr[index] < 0) && (arr[wrongIndex] >= 0)))
+            if (((arr[index] >= 0) && (arr[wrongIndex] < 0)) 
+                || ((arr[index] < 0) && (arr[wrongIndex] >= 0)))
             {
                 rightrotate(arr, n, wrongIndex, index);
+                //? the new out-of-place entry is now 2 steps
+                //? ahead
                 if (index - wrongIndex >= 2)
-                {
+                { //? if difference between index and wrongIndex >= 2 means (wringIndex + 1th index is correct but +2 index may be wrong so increment by +2)
                     wrongIndex = wrongIndex + 2;
                 }
                 else
-                {
+                { //? else difference is not much and elem place and rotate correctly
                     wrongIndex = -1;
                 }
             }
         }
         if (wrongIndex == -1)
         {
-            if (((arr[index] >= 0) && (!(index & 0x01))) || ((arr[index] < 0) && (index & 0x01)))
+            if ( (arr[index] < 0 && index%2 == 1 /*ODD*/ ) 
+                || (arr[index] >= 0 && index%2 == 0 /*EVEN*/ ))
             {
                 wrongIndex = index;
             }
@@ -672,12 +674,239 @@ void alt_posNeg_Main_Func2(int *arr, int n)
     }
     print_Array(arr, n);
 }
+
+int subarrWZeroSum_Main_Func(int *arr, int n){ // 21
+//! conditions
+//? 1.idea is if sum is zero then yes it contain subarry
+//? 2.after adding elem if sum is repeat then it also contain sunbarry
+//* set is use to duplicacy
+//? if sum is already present then 2 condition hold.
+    set<int> s;
+    int sum = 0;
+    for(int i = 0; i<n; i++){
+        sum += arr[i];
+        if(sum == 0 || s.find(sum) != s.end())
+            return true;
+        s.insert(sum);
+    }
+    cout<<"\n";
+    return false;
+}
+
+vector<int> largeFactorial_Main_Func(int n){ // 22
+    vector<int> res;
+    res.push_back(1);
+    for(int i = 2; i <= n; i++){
+        int carry = 0;
+        for(int j = 0; j < res.size(); j++){
+            int val = res[j] * i + carry;
+            res[j] = val % 10;
+            carry = val / 10;
+        }
+        while(carry != 0){
+            res.push_back(carry%10);
+            carry /= 10;
+        }
+    }
+    reverse(res.begin(),res.end());
+    return res;
+}
+
+void morethanNbyK_Main_Func(int *arr, int n, int k){
+    int x = n/k;
+    unordered_map<int,int> freq;
+    // first value & second contain count
+    for(int i = 0; i < n; i++){
+        freq[arr[i]]++;
+    }
+    // Traversing the map
+    for(auto i : freq){
+        if(i.second > x){
+            cout<<i.first<<" ";
+        }
+    }
+}
+
+void countPairSum_Main_Func(int *arr, int n, int k){
+    /*
+    //! 1. brute force
+    int cnt = 0;
+    for(int i = 0; i<n-1; i++){
+        for(int j = i + 1; j < n; j++)
+            if(arr[i] + arr[j] == k)
+                cnt++;
+    }
+    cout<<"count : "<<cnt<<"\n";
+    */
+
+//storing frequency of number if it not present in map simplay
+//so that we use this freqnecy in next term
+//suppose first time 1 has zero freq we simply  inc feq by one 
+//again 1 come and have sum value 2 then x=1 now we have pair freq of that number 
+    unordered_map<int,int> m;
+    int cnt = 0;
+    for(int i = 0; i < n; i++){
+        int x = k - arr[i];
+        if(m[x])
+            cnt += m[x];
+        m[arr[i]]++;
+    }
+    cout<<"count : "<<cnt<<"\n";
+}
+
+void maxProfit_Main_Func(int *price, int n){}
+
+bool src(int key, int *A, int N){
+    int start = 0; 
+    int end = N - 1;
+    while(start<=end){
+        int mid = start + (end - start) / 2;
+        if(A[mid] == key)
+            return true;
+        else if(A[mid] > key)
+            end = mid - 1;
+        else 
+            start = mid + 1;
+    }
+    return false;
+}
+string isSubset_Main_Func1(int *A, int *B, int N, int M){
+    //* Binary Search
+    sort(A,A+N); //!IMP
+    for(int i = 0; i < M; i++){
+        bool found = src(B[i],A,N);
+        if(found == false){
+            return "NO";
+        }
+    }
+    return "YES";
+}
+string isSubset_Main_Func2(int *A, int *B, int N, int M){
+    unordered_set<int> s;
+    for(int i = 0; i<N; i++)
+        s.insert(A[i]);
+    /*
+    !still confuse in ' == ' (complete set) & ' != (if set is not complete) ' in set to find element
+    */
+    for(int i = 0; i<M; i++)
+        if(s.find(B[i]) == s.end())
+            return "NO";
+    return "YES";
+}
+
+int find3Numbers_Main_Func(int *arr, int n, int x){
+    sort(arr,arr+n);
+    for(int i = 0; i<n; i++){
+        int slow = i + 1;
+        int fast = n - 1;
+        while(slow < fast){
+            int sumAll = arr[i] + arr[slow] + arr[fast];
+            if(sumAll == x){
+                return 1;
+            }else if( sumAll > x)
+                fast--;
+            else 
+                slow++;
+        }
+    }
+    return 0;
+}
 /* 
 ! |----------------------------- SUB_main_Func end -----------------------------|
 */
 /*
 ! |----------------------------- SUB_main start -----------------------------| 
 */
+
+void find3Numbers_Main(){
+    int arr[] = {1, 4, 45, 6, 10, 8};
+    int n = 6;
+    int findSum = 13;
+    cout<<endl;
+    int isSum = find3Numbers_Main_Func(arr,n,findSum);
+    cout<<isSum<<endl;
+    cout<<endl;
+}
+
+void isSubset_Main(){
+    /*
+    Input:
+    a1[] = {11, 1, 13, 21, 3, 7}
+    a2[] = {11, 3, 7, 1}
+    Output:
+    Yes
+    Explanation:
+    a2[] is a subset of a1[]
+    */
+    int A[] = {11, 1, 13, 21, 3, 7};
+    int B[] = {11, 3, 7, 1};
+    int N = 6, M = 4;
+    cout<<"\n"; 
+    // string BS = isSubset_Main_Func1(A,B,N,M);
+    // cout<<BS<<"\n";
+    string sets = isSubset_Main_Func2(A,B,N,M);
+    cout<<sets<<"\n";
+    cout<<"\n"; 
+}
+
+void maxProfit_Main(){
+    int price[] = { 2, 30, 15, 10, 8, 25, 80 };
+    int n = 7;
+    maxProfit_Main_Func(price,n);
+}
+
+void countPairSum_Main(){
+    int arr[] = { 1,5,7,1 };
+    int n = 4;
+    int k = 6;
+    /*
+Output: 2
+Explanation: 
+arr[0] + arr[1] = 1 + 5 = 6 
+and arr[1] + arr[3] = 5 + 1 = 6.
+    */
+    cout<<"\n";
+    countPairSum_Main_Func(arr,n,k);
+    cout<<"\n";
+}
+
+void morethanNbyK_Main(){
+        int arr[] = { 1, 1, 2, 2, 3, 5,
+                    4, 2, 2, 3, 1, 1, 1 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+    cout<<"\n";
+    morethanNbyK_Main_Func(arr, n, k);
+    cout<<"\n";
+}
+
+void largeFactorial_Main(){ // 22
+    /* Given an integer N, find its factorial. 
+    Input: N = 10
+    Output: 3628800
+    Explanation :
+    10! = 1*2*3*4*5*6*7*8*9*10 = 3628800
+    */
+    int n = 10;
+    cout<<"\n";
+    vector<int> ans = largeFactorial_Main_Func(n);
+    print_VArray(ans, ans.size());
+    cout<<"\n";
+
+}
+
+void subarrWZeroSum_Main(){ // 21
+    int arr[] = {4, 2, -3, 1, 6};
+    int n = 5;
+    cout<<"\n";
+    int subArrayExists = subarrWZeroSum_Main_Func(arr,n);
+    if(subArrayExists){
+        cout<<"YES"<<"\n";
+    }else{
+        cout<<"NO"<<"\n";
+    }
+    cout<<"\n";
+}
 
 void alt_posNeg_Main()
 { // 20
@@ -915,7 +1144,7 @@ void swapTwoNum_Main()
 int main()
 { // main body
 
-    // ! : total number of Arrays question - 15 / 36
+    // ! : total number of Arrays question - 17 / 36
 
     /*
      *sub-main functions
@@ -1027,5 +1256,62 @@ int main()
     *20.Rearrange array in alternating 
     *positive & negative items with O(1) extra space
     */
-    alt_posNeg_Main();
+    // alt_posNeg_Main();
+
+    /*
+    *MICS 2. Rearrange Array Alternately
+    */
+    // TODO : Rearrange_Array_Alternately_Main();
+
+    /*
+    *21. Subarray with 0 sum
+    */
+    //? subarrWZeroSum_Main();
+
+    /*
+    *22. Factorials of large numbers
+    */
+    // largeFactorial_Main();
+
+    /*
+    *23. Maximum Product Subarray
+    */
+    // ! Dynamic Programming
+    // TODO : maximum_Product_Subarray_Main();
+    /*
+    *24. Longest consecutive subsequence
+    */
+    // ! Hash
+    // TODO : longest_Consecutive_Subsequence_Main();
+
+    /*
+    *25. Given an array of size n and a number k, find all elements that appear more than "n/k" times
+    */
+    // morethanNbyK_Main();
+
+    /*
+    *26. Count pairs with given sum
+    */
+    // countPairSum_Main();
+
+    /*
+    *27. Maximum profit by buying and selling a share at most twice
+    */
+    // ! HARD
+    // TODO : maxProfit_Main();
+
+    /*
+    *28. Array Subset of another array (2M)
+    */
+    // isSubset_Main();
+
+    /*
+    *29. Triplet Sum in Array
+    */
+    // find3Numbers_Main();
+    /*
+    *30. Trapping Rain Water
+    */
+    // ! Dynamic Programming
+    // trapping_Rain_Water_Main();
 }
